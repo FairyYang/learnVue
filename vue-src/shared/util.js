@@ -144,6 +144,11 @@ export function cached<F: Function> (fn: F): F {
 const camelizeRE = /-(\w)/g
 export const camelize = cached((str: string): string => {
   return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : '')
+  /*
+   * String.prototype.replace(RegExp,replacement),replacement可以是函数，函数参数分别是（匹配的子字符串,p1、p2...,offset,原字符串）
+   * p1、p2是第n个匹配的括号里的子字符串
+   * offsetshi 匹配到的子字符串在原字符串中的偏移量（比如，如果原字符串是 'abcd'，匹配到的子字符串是 'bc'，那么这个参数将会是 1）
+  /
 })
 
 /**
