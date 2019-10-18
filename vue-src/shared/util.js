@@ -36,7 +36,7 @@ const _toString = Object.prototype.toString
  * Strict object type check. Only returns true
  * for plain JavaScript objects.
  */
- /*对对象类型进行严格检查，只有当对象是纯javascript对象的时候返回true*/
+ /*对象类型进行严格检查，只有当对象是纯javascript对象的时候返回true*/
 export function isPlainObject (obj: any): boolean {
   return _toString.call(obj) === '[object Object]'
 }
@@ -90,7 +90,11 @@ export function makeMap (
   str: string,
   expectsLowerCase?: boolean
 ): (key: string) => true | void {
+  /*
+   * Object.create(null)没有原型，{}有原型，Object.create是创建一个继承对象
+  */
   const map = Object.create(null)
+  
   const list: Array<string> = str.split(',')
   for (let i = 0; i < list.length; i++) {
     map[list[i]] = true
@@ -244,6 +248,7 @@ export const identity = (_: any) => _
 
 /**
  * Generate a static keys string from compiler modules.
+ * 把modules的每个statickeys 链接起来 形成一个特定的静态key
  */
 export function genStaticKeys (modules: Array<ModuleOptions>): string {
   return modules.reduce((keys, m) => {
@@ -256,6 +261,12 @@ export function genStaticKeys (modules: Array<ModuleOptions>): string {
  * if they are plain objects, do they have the same shape?
  */
  /*检测两个变量是否相等*/
+/*
+ * if they are plain objects, do they have the same shape?
+ *  判断两个对象 的值是否相等, 而不用考虑对象地址是否相同
+  *  var a = {}; var b = {};  looseEqual(a,b) => true,
+  *   对于 null 和 0 false是不相等的
+ */
 export function looseEqual (a: mixed, b: mixed): boolean {
   const isObjectA = isObject(a)
   const isObjectB = isObject(b)
@@ -274,6 +285,7 @@ export function looseEqual (a: mixed, b: mixed): boolean {
 }
 
 /*检测arr数组中是否包含与val变量相等的项*/
+/*比如 arr是 [{"a":1},...]  looseIndexOf( arr, {"a":1} )  => 0 */
 export function looseIndexOf (arr: Array<mixed>, val: mixed): number {
   for (let i = 0; i < arr.length; i++) {
     if (looseEqual(arr[i], val)) return i
@@ -283,6 +295,7 @@ export function looseIndexOf (arr: Array<mixed>, val: mixed): number {
 
 /**
  * Ensure a function is called only once.
+ * 保证这个函数只调用一次
  */
 export function once (fn: Function): Function {
   let called = false
